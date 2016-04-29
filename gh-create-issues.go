@@ -31,7 +31,7 @@ func CheckErr(err error, msg string, exit int) {
 }
 
 func main() {
-	cfg := Config{}
+	cfg := &Config{}
 	env.Parse(&cfg)
 
 	var issues []github.IssueRequest
@@ -46,7 +46,7 @@ func main() {
 	c := github.NewClient(tc)
 	c.BaseURL, _ = url.Parse(cfg.ApiBaseUrl)
 
-	myIssues, _, err := c.Issues.ListByRepo(cfg.RepoOwner, cfg.RepoName, &github.IssueListByRepoOptions{})
+	myIssues, err := getIssues(c, cfg)
 	if err != nil {
 		CheckErr(err, "Fail to fetch list of issues", 1)
 	}
@@ -64,4 +64,24 @@ func main() {
 			}
 		}
 	}
+}
+
+func getIssues(client *github.Client, cfg *Config) (issues []github.Issue, err error) {
+	page := 1
+	for page != 0 {
+		lsopt := &github.ListOptions{
+			PerPage: 100,
+			Page:    page,
+		}
+		opt := &github.IssueListByRepoOptions{
+			ListOptions: *lsopt,
+		}
+		is, resp, _ := client.Issues.ListByRepo(cfg.RepoOwner, cfg.RepoName, opt)
+		page = resp.NextPage
+		issues = append(issues, is...)
+	}
+
+	log.Printf("Found %v issues", len(issues))
+
+	return
 }
