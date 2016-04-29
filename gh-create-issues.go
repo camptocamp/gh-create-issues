@@ -57,6 +57,7 @@ func main() {
 
 	for _, issue := range issues {
 		if _, ok := issuesMap[*issue.Title]; !ok {
+			log.Info("Creating new issue " + *issue.Title)
 			_, _, err := c.Issues.Create(cfg.RepoOwner, cfg.RepoName, &issue)
 			if err != nil {
 				CheckErr(err, "Fail to create issue", -1)
