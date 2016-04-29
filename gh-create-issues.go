@@ -54,7 +54,6 @@ func main() {
 	}
 
 	for _, issue := range issues {
-		log.Printf("title=%v", *issue.Title)
 		if _, ok := issuesMap[*issue.Title]; !ok {
 			_, _, err := c.Issues.Create(cfg.RepoOwner, cfg.RepoName, &issue)
 			if err != nil {
