@@ -50,14 +50,17 @@ func main() {
 	if err != nil {
 		CheckErr(err, "Fail to fetch list of issues", 1)
 	}
-	issuesMap := make(map[string]github.Issue)
-	for _, i := range myIssues {
-		issuesMap[*i.Title] = i
-	}
 
 	for _, issue := range issues {
-		if _, ok := issuesMap[*issue.Title]; !ok {
-			log.Info("Creating new issue " + *issue.Title)
+		found := false
+		for _, i := range myIssues {
+			if *i.Title == *issue.Title {
+				found = true
+				return
+			}
+		}
+		if !found {
+			log.Infof("Creating new issue %v", *issue.Title)
 			_, _, err := c.Issues.Create(cfg.RepoOwner, cfg.RepoName, &issue)
 			if err != nil {
 				CheckErr(err, "Fail to create issue", -1)
@@ -79,8 +82,6 @@ func getIssues(client *github.Client, cfg *Config) (issues []github.Issue, err e
 		page = resp.NextPage
 		issues = append(issues, is...)
 	}
-
-	log.Printf("Found %v issues", len(issues))
 
 	return
 }
