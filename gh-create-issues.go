@@ -32,7 +32,7 @@ func CheckErr(err error, msg string, exit int) {
 
 func main() {
 	cfg := &Config{}
-	env.Parse(&cfg)
+	env.Parse(cfg)
 
 	var issues []github.IssueRequest
 	bytes, _ := ioutil.ReadAll(os.Stdin)
