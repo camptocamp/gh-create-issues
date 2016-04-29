@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"io/ioutil"
 	"net/url"
 	"os"
 
@@ -34,7 +35,8 @@ func main() {
 	env.Parse(&cfg)
 
 	var issues []github.IssueRequest
-	json.Unmarshal([]byte(os.Args[1]), &issues)
+	bytes, _ := ioutil.ReadAll(os.Stdin)
+	json.Unmarshal(bytes, &issues)
 
 	ts := oauth2.StaticTokenSource(
 		&oauth2.Token{AccessToken: cfg.Token},
