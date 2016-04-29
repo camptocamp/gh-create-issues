@@ -67,7 +67,7 @@ func main() {
 }
 
 func getIssues(client *github.Client, cfg *Config) (issues []github.Issue, err error) {
-	page := 1
+	/*page := 1
 	for page != 0 {
 		lsopt := &github.ListOptions{
 			PerPage: 100,
@@ -79,8 +79,9 @@ func getIssues(client *github.Client, cfg *Config) (issues []github.Issue, err e
 		is, resp, _ := client.Issues.ListByRepo(cfg.RepoOwner, cfg.RepoName, opt)
 		page = resp.NextPage
 		issues = append(issues, is...)
-	}
+	}*/
 
+	issues, _, err = client.Issues.ListByRepo(cfg.RepoOwner, cfg.RepoName, &github.IssueListByRepoOptions{})
 	log.Printf("Found %v issues", len(issues))
 
 	return
