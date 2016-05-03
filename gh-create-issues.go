@@ -77,6 +77,7 @@ func getIssues(client *github.Client, cfg *Config) (issues []github.Issue, err e
 		}
 		opt := &github.IssueListByRepoOptions{
 			ListOptions: *lsopt,
+			State:       "all",
 		}
 		is, resp, _ := client.Issues.ListByRepo(cfg.RepoOwner, cfg.RepoName, opt)
 		page = resp.NextPage
