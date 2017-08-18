@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"encoding/json"
 	"io/ioutil"
 	"net/url"
@@ -61,7 +62,7 @@ func main() {
 		}
 		if !found {
 			log.Infof("Creating new issue %v", *issue.Title)
-			_, _, err := c.Issues.Create(cfg.RepoOwner, cfg.RepoName, &issue)
+			_, _, err := c.Issues.Create(context.Background(), cfg.RepoOwner, cfg.RepoName, &issue)
 			if err != nil {
 				CheckErr(err, "Fail to create issue", -1)
 			}
@@ -69,7 +70,7 @@ func main() {
 	}
 }
 
-func getIssues(client *github.Client, cfg *Config) (issues []github.Issue, err error) {
+func getIssues(client *github.Client, cfg *Config) (issues []*github.Issue, err error) {
 	page := 1
 	for page != 0 {
 		lsopt := &github.ListOptions{
@@ -79,7 +80,7 @@ func getIssues(client *github.Client, cfg *Config) (issues []github.Issue, err e
 			ListOptions: *lsopt,
 			State:       "all",
 		}
-		is, resp, _ := client.Issues.ListByRepo(cfg.RepoOwner, cfg.RepoName, opt)
+		is, resp, _ := client.Issues.ListByRepo(context.Background(), cfg.RepoOwner, cfg.RepoName, opt)
 		page = resp.NextPage
 		issues = append(issues, is...)
 	}
