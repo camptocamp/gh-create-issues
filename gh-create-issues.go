@@ -80,8 +80,12 @@ func getIssues(client *github.Client, cfg *Config) (issues []*github.Issue, err 
 			ListOptions: *lsopt,
 			State:       "all",
 		}
-		is, resp, _ := client.Issues.ListByRepo(context.Background(), cfg.RepoOwner, cfg.RepoName, opt)
+		is, resp, err := client.Issues.ListByRepo(context.Background(), cfg.RepoOwner, cfg.RepoName, opt)
+		if err != nil {
+			log.Fatal(err)
+		}
 		page = resp.NextPage
+		log.Infof("Adding %v issues", len(is))
 		issues = append(issues, is...)
 	}
 
